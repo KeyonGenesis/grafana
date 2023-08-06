@@ -1,0 +1,2 @@
+[hotgreencar]
+192.168.0.8 ansible_user=kial1 ansible_ssh_private_key_file=/home/kial1/grafana/greencar

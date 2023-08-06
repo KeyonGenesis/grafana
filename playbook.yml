@@ -1,0 +1,55 @@
+---
+- hosts: hotgreencar
+  gather_facts: false
+  become: true
+  vars:
+    grafana_files: ~/grafana/grafanafiles/
+    destination_path: ~/grafana/
+    destination_path_grafana: /root/grafana/
+  tasks:
+    - name: Установка необходимых пакетов
+      yum:
+        name: ['yum-utils', 'device-mapper-persistent-data', 'lvm2']
+        state: present
+
+    - name: Добавление репозитория Docker
+      command:
+        cmd: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: Установка пакетов Docker
+      yum:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Включение и запуск службы Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Копирование файлов docker-compose
+      copy:
+        src: "{{ grafana_files }}"
+        dest: "{{ destination_path }}"
+
+    - name: Start Docker Compose in the /grafana directory
+      command:
+        cmd: docker compose up -d
+        chdir: "{{ destination_path_grafana }}"
+
+    - name: Сделать скрипт myscript.sh исполняемым
+      file:
+        path: "{{ destination_path_grafana }}/myscript.sh"
+        mode: '0755'
+
+    - name: Запустить скрипт myscript.sh из каталога {{ destination_path_grafana }}
+      command:
+        cmd: ./myscript.sh
+        chdir: "{{ destination_path_grafana }}"
+
+
