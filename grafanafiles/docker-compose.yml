@@ -73,8 +73,8 @@ services:
     networks:
     - portainer_default
     environment:
-      GF_SECURITY_ADMIN_USER: kial1
-      GF_SECURITY_ADMIN_PASSWORD: 898904ok
+      GF_SECURITY_ADMIN_USER:
+      GF_SECURITY_ADMIN_PASSWORD: 
 
 networks:
   portainer_default:
